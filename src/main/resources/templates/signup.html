@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Auction System</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container auth-container">
+    <h1>Create Account</h1>
+
+    <p th:if="${signupError}" class="error-text" th:text="${signupError}"></p>
+
+    <form th:action="@{/signup}" th:object="${signupRequest}" method="post" class="bid-form">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" th:field="*{username}" required />
+            <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-text"></small>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" type="password" th:field="*{password}" required />
+            <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-text"></small>
+        </div>
+        <button type="submit" class="btn">Sign Up</button>
+    </form>
+
+    <p>Already have an account? <a href="/login">Login</a></p>
+</div>
+</body>
+</html>

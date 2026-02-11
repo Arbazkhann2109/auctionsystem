@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${auction.title} + ' - Auction'">Auction</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="top-actions">
+        <a href="/" class="back-link">← Back to auctions</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn">Logout</button>
+        </form>
+    </div>
+
+    <h1 th:text="${auction.title}">Auction Item</h1>
+    <p th:text="${auction.description}">Description</p>
+    <p><strong>Logged in as:</strong> <span th:text="${#authentication.name}"></span></p>
+
+    <div class="price-box">
+        Current Highest Bid: $<span id="currentPrice" th:text="${auction.currentPrice}">0</span>
+    </div>
+
+    <form id="bidForm" class="bid-form">
+        <input type="hidden" id="auctionId" th:value="${auction.id}" />
+        <div>
+            <label for="amount">Bid Amount</label>
+            <input id="amount" type="number" step="0.01" min="0.01" required />
+        </div>
+        <button type="submit" class="btn">Place Bid</button>
+    </form>
+
+    <p id="statusMessage"></p>
+</div>
+
+<script>
+    const auctionId = document.getElementById('auctionId').value;
+    const socket = new SockJS('/bidding');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+        stompClient.subscribe(`/topic/auctions/${auctionId}`, message => {
+            document.getElementById('currentPrice').innerText = message.body;
+            document.getElementById('statusMessage').innerText = 'New highest bid received!';
+        });
+
+        stompClient.subscribe(`/topic/auctions/${auctionId}/errors`, message => {
+            document.getElementById('statusMessage').innerText = message.body;
+        });
+    });
+
+    document.getElementById('bidForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const payload = {
+            auctionId: Number(auctionId),
+            amount: Number(document.getElementById('amount').value)
+        };
+
+        stompClient.send('/app/bid', {}, JSON.stringify(payload));
+        event.target.reset();
+    });
+</script>
+</body>
+</html>
