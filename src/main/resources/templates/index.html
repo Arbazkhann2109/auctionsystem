@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auction System</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container">
+    <div class="top-actions">
+        <h1>Live Auctions</h1>
+        <div class="auth-box">
+            <span th:text="'Welcome, ' + ${username}"></span>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="btn">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="auction-grid">
+        <div class="card" th:each="auction : ${auctions}">
+            <h2 th:text="${auction.title}">Title</h2>
+            <p th:text="${auction.description}">Description</p>
+            <p><strong>Current Price:</strong> $<span th:text="${auction.currentPrice}"></span></p>
+            <p><strong>Ends:</strong> <span th:text="${#temporals.format(auction.endTime, 'yyyy-MM-dd HH:mm')}"></span></p>
+            <a th:href="@{'/auctions/' + ${auction.id}}" class="btn">Join Bidding</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Auction System</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<div class="container auth-container">
+    <h1>Login</h1>
+
+    <p th:if="${param.registered}" class="success-text">Account created successfully. Please login.</p>
+    <p th:if="${param.logout}" class="success-text">You have been logged out.</p>
+    <p th:if="${param.error}" class="error-text">Invalid username or password.</p>
+
+    <form th:action="@{/login}" method="post" class="bid-form">
+        <div>
+            <label for="username">Username</label>
+            <input id="username" name="username" required />
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" required />
+        </div>
+        <button type="submit" class="btn">Login</button>
+    </form>
+
+    <p>New user? <a href="/signup">Create an account</a></p>
+</div>
+</body>
+</html>
